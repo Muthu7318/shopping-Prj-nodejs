@@ -38,6 +38,12 @@ exports.getCart = (req, res, next) => {
   });
 };
 
+exports.postCard = (req, res, nex) => {
+  const { productId } = req.body;
+  console.log(productId);
+  res.redirect("/cart");
+};
+
 exports.getCheckout = (req, res, next) => {
   res.render("shop/checkout", {
     path: "/checkout",
