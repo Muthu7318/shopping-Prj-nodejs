@@ -17,7 +17,8 @@ const getProductsFromFile = (cb) => {
 
 module.exports = class Product {
   constructor(id, title, imageUrl, description, price) {
-    (this.id = id), (this.title = title);
+    this.id = id;
+    this.title = title;
     this.imageUrl = imageUrl;
     this.description = description;
     this.price = price;
@@ -41,6 +42,15 @@ module.exports = class Product {
           console.log(err);
         });
       }
+    });
+  }
+
+  static delete(prodId) {
+    getProductsFromFile((products) => {
+      const remainingProducts = products.filter((item) => item.id !== prodId);
+      fs.writeFile(p, JSON.stringify(remainingProducts), (err) => {
+        console.log(err);
+      });
     });
   }
 
