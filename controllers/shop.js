@@ -54,10 +54,14 @@ exports.getCart = (req, res, next) => {
   });
 };
 
-exports.deleteCartItem = (req, res, next) => {
-  res.render("shop/cart", {
-    path: "Cart",
-    pageTitle: "Your Cart",
+exports.postCartDeleteProduct = (req, res, next) => {
+  const { productId } = req.body;
+  Product.findById(productId, (product) => {
+    if (!product) {
+      return res.redirect("/");
+    }
+    Cart.deleteProduct(productId, product.price);
+    res.redirect("/cart");
   });
 };
 
