@@ -39,6 +39,13 @@ exports.getCart = (req, res, next) => {
   });
 };
 
+exports.deleteCartItem = (req, res, next) => {
+  res.render("shop/cart", {
+    path: "Cart",
+    pageTitle: "Your Cart",
+  });
+};
+
 exports.postCard = (req, res, nex) => {
   const { productId } = req.body;
   Product.findById(productId, (product) => {
