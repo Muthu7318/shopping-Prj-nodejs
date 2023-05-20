@@ -44,8 +44,8 @@ Cart.belongsToMany(Product, { through: CartItem }); // one cart can hold multipl
 Product.belongsToMany(Cart, { through: CartItem }); // one product can be part of multiple carts
 
 sequelize
-  .sync({ force: true })
-  // .sync()
+  // .sync({ force: true })
+  .sync()
   .then((res) => {
     return User.findByPk(1);
   })
@@ -59,6 +59,9 @@ sequelize
     return user;
   })
   .then((user) => {
+    return user.createCart();
+  })
+  .then((cart) => {
     app.listen(3000, () => {
       console.log("server ready");
     });
