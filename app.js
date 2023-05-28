@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const errorController = require("./controllers/error");
-const { mongoConnect, getDb } = require("./util/database");
+const mongoose = require("mongoose");
 
 const User = require("./models/user");
 
@@ -29,9 +29,13 @@ app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 app.use(errorController.get404);
 
-mongoConnect(() => {
-  // console.log(client);
-  app.listen(3000, () => {
-    console.log("server ready");
-  });
-});
+mongoose
+  .connect(
+    "mongodb+srv://nmuthukumaranm:xYuGgQijBQvUp836@cluster0.jw0cqeq.mongodb.net/shop?retryWrites=true&w=majority"
+  )
+  .then((result) =>
+    app.listen(3000, () => {
+      console.log("server ready");
+    })
+  )
+  .catch((err) => console.log(err));
