@@ -3,7 +3,7 @@ const mongodb = require("mongodb");
 
 exports.getAddProduct = (req, res, next) => {
   // res.sendFile(path.join(rootDir, "views", "add-product.html"));
-  res.render("admin/edit-product", {
+  return res.render("admin/edit-product", {
     pageTitle: "Add Product",
     path: "/admin/add-product",
     editing: false,
@@ -12,12 +12,19 @@ exports.getAddProduct = (req, res, next) => {
 
 exports.postAddProduct = (req, res, next) => {
   const { title, imageUrl, description, price } = req.body;
-  const product = new Product(title, price, description, imageUrl);
+  const product = new Product(
+    title,
+    price,
+    description,
+    imageUrl,
+    null,
+    req.user._id
+  );
 
   product
     .save()
     .then(() => {
-      res.redirect("/admin/products");
+      return res.redirect("/admin/products");
     })
     .catch((err) => console.log(err));
 };
@@ -34,7 +41,7 @@ exports.getEditProduct = (req, res, next) => {
       if (!product) {
         return res.redirect("/");
       }
-      res.render("admin/edit-product", {
+      return res.render("admin/edit-product", {
         pageTitle: "Edit Product",
         path: "/admin/edit-product",
         editing: !!editMode,
@@ -50,7 +57,7 @@ exports.postEditProduct = (req, res, next) => {
   product
     .save()
     .then((result) => {
-      res.redirect("/admin/products");
+      return res.redirect("/admin/products");
       console.log("product updated!!");
     })
     .catch((err) => console.log(err));
@@ -61,7 +68,7 @@ exports.postDeleteProduct = (req, res, next) => {
 
   Product.deleteById(productId)
     .then(() => {
-      res.redirect("/admin/products");
+      return res.redirect("/admin/products");
     })
     .catch((err) => console.log(err));
 };
@@ -69,7 +76,7 @@ exports.postDeleteProduct = (req, res, next) => {
 exports.getProducts = (req, res, next) => {
   Product.fetchAll()
     .then((products) => {
-      res.render("admin/products", {
+      return res.render("admin/products", {
         prods: products,
         pageTitle: "Admin Products",
         path: "/admin/products",
