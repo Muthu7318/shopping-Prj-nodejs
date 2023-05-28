@@ -67,6 +67,7 @@ class User {
   }
 
   addToCart(product) {
+    console.log("test---", this.cart);
     const cartProductIndex = this.cart.items.findIndex((cartProd) => {
       return cartProd.productId.toString() === product._id.toString();
     });
@@ -97,6 +98,40 @@ class User {
       }
     );
   }
+
+  addOrder() {
+    const db = getDb();
+    return this.getCart()
+      .then((products) => {
+        const order = {
+          items: products,
+          user: {
+            _id: new mongodb.ObjectId(this._id),
+            name: this.name,
+          },
+        };
+        return db.collection("orders").insertOne(order);
+      })
+      .then((result) => {
+        this.cart = {
+          items: [],
+        };
+        return db.collection("users").updateOne(
+          {
+            _id: new mongodb.ObjectId(this._id),
+          },
+          {
+            $set: {
+              cart: {
+                items: [],
+              },
+            },
+          }
+        );
+      });
+  }
+
+  getOrders() {}
 
   static findById(userId) {
     const db = getDb();
