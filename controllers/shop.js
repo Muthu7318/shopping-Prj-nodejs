@@ -44,6 +44,7 @@ exports.getIndex = (req, res, next) => {
 exports.getCart = (req, res, next) => {
   req.user.populate("cart.items.productId").then((user) => {
     const products = user.cart.items;
+    console.log("test--8", products);
     return res.render("shop/cart", {
       path: "cart",
       pageTitle: "Your Cart",
