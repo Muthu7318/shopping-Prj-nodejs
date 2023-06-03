@@ -6,6 +6,7 @@ const shopRoutes = require("./routes/shop");
 const authRoutes = require("./routes/auth");
 const errorController = require("./controllers/error");
 const mongoose = require("mongoose");
+const session = require("express-session");
 
 const User = require("./models/user");
 
@@ -16,6 +17,13 @@ app.set("views", "views");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(
+  session({
+    secret: "this is my secret",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
 
 app.use((req, res, next) => {
   User.findById("64735cd7ab756b73b4cefb77")
