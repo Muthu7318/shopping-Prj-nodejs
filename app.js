@@ -7,10 +7,17 @@ const authRoutes = require("./routes/auth");
 const errorController = require("./controllers/error");
 const mongoose = require("mongoose");
 const session = require("express-session");
+const MongoDBStore = require("connect-mongodb-session")(session);
 
 const User = require("./models/user");
+const MONGODB_URI =
+  "mongodb+srv://nmuthukumaranm:xYuGgQijBQvUp836@cluster0.jw0cqeq.mongodb.net/shop?retryWrites=true&w=majority";
 
 const app = express();
+const store = new MongoDBStore({
+  uri: MONGODB_URI,
+  collection: "sessions",
+});
 
 app.set("view engine", "ejs");
 app.set("views", "views");
@@ -22,6 +29,7 @@ app.use(
     secret: "this is my secret",
     resave: false,
     saveUninitialized: false,
+    store: store,
   })
 );
 
@@ -41,9 +49,7 @@ app.use(authRoutes);
 app.use(errorController.get404);
 
 mongoose
-  .connect(
-    "mongodb+srv://nmuthukumaranm:xYuGgQijBQvUp836@cluster0.jw0cqeq.mongodb.net/shop?retryWrites=true&w=majority"
-  )
+  .connect(MONGODB_URI)
   .then((result) => {
     User.findOne().then((user) => {
       if (!user) {
