@@ -77,7 +77,7 @@ exports.postLogin = (req, res, next) => {
 };
 
 exports.postSignup = (req, res, next) => {
-  const { email, password, confirmPassword } = req.body;
+  const { email, password } = req.body;
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -88,44 +88,35 @@ exports.postSignup = (req, res, next) => {
     });
   }
 
-  User.findOne({
-    email: email,
-  })
-    .then((user) => {
-      if (user) {
-        console.log("flash", req.flash("error", "Email exist already"));
-        return res.redirect("/signup");
-      }
-      return bcrypt
-        .hash(password, 12)
-        .then((hashedPassword) => {
-          const newUser = new User({
-            email: email,
-            password: hashedPassword,
-            cart: {
-              items: [],
-            },
-          });
-          return newUser.save();
-        })
-        .then((result) => {
-          res.redirect("/login");
-          transporter.sendMail(
-            {
-              from: "shoping App",
-              to: email,
-              subject: "Signup succeeded!",
-              text: "<h1>Successfully signed up!!</h1>",
-            },
-            function (error, info) {
-              if (error) {
-                console.log("email err", error);
-              } else {
-                console.log("Email sent: " + info.response);
-              }
-            }
-          );
-        });
+  bcrypt
+    .hash(password, 12)
+    .then((hashedPassword) => {
+      const newUser = new User({
+        email: email,
+        password: hashedPassword,
+        cart: {
+          items: [],
+        },
+      });
+      return newUser.save();
+    })
+    .then((result) => {
+      res.redirect("/login");
+      transporter.sendMail(
+        {
+          from: "shoping App",
+          to: email,
+          subject: "Signup succeeded!",
+          text: "<h1>Successfully signed up!!</h1>",
+        },
+        function (error, info) {
+          if (error) {
+            console.log("email err", error);
+          } else {
+            console.log("Email sent: " + info.response);
+          }
+        }
+      );
     })
     .catch((err) => console.log(err));
 };
