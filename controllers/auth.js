@@ -29,7 +29,30 @@ exports.postLogin = (req, res, next) => {
     .catch((err) => console.log(err));
 };
 
-exports.postSignup = (req, res, next) => {};
+exports.postSignup = (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+
+  User.findOne({
+    email: email,
+  })
+    .then((user) => {
+      if (user) {
+        return res.redirect("/singup");
+      }
+      const newUser = new User({
+        email: email,
+        password: password,
+        cart: {
+          items: [],
+        },
+      });
+      return newUser.save();
+    })
+    .then((result) => {
+      res.redirect("/login");
+    })
+    .catch((err) => console.log(err));
+};
 
 exports.postLogout = (req, res, next) => {
   req.session.destroy((err) => {
