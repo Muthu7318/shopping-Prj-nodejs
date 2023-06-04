@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
+const crypto = require("crypto");
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -9,7 +10,7 @@ const transporter = nodemailer.createTransport({
   secure: true, // use SSL
   auth: {
     user: "nmuthukumaranm@gmail.com",
-    pass: "",
+    pass: "onfupjueyjasgbzx",
   },
 });
 
@@ -122,5 +123,65 @@ exports.postLogout = (req, res, next) => {
   req.session.destroy((err) => {
     console.log("dest", err);
     res.redirect("/");
+  });
+};
+
+exports.getReset = (req, res, next) => {
+  let message = req.flash("error");
+  console.log("message", message);
+  if (message) {
+    message = message[0];
+  } else {
+    message = null;
+  }
+  res.render("auth/reset", {
+    path: "/reset",
+    pageTitle: "Reset Password",
+    errorMessage: message,
+  });
+};
+
+exports.postReset = (req, res, next) => {
+  crypto.randomBytes(32, (err, buffer) => {
+    if (err) {
+      console.log("crypto", err);
+      return res.redirect("/reset");
+    }
+    const token = buffer.toString("hex");
+
+    User.findOne({
+      email: req.body.email,
+    })
+      .then((user) => {
+        if (!user) {
+          req.flash("error", "user does not exisit");
+          return res.redirect("/reset");
+        }
+        user.resetToken = token;
+        user.resetTokenExpiration = Date.now() + 3600000;
+        return user.save();
+      })
+      .then((result) => {
+        res.redirect("/");
+        transporter.sendMail(
+          {
+            from: "nmuthukumaranm@gmail.com",
+            to: req.body.email,
+            subject: "Password reset",
+            html: `
+            <p> you requested a password reset </p>
+            <p> Click this <a href="http://localhost:3000/reset/${token}"> to set a new password </p>
+            `,
+          },
+          function (error, info) {
+            if (error) {
+              console.log("email err", error);
+            } else {
+              console.log("Email sent: " + info.response);
+            }
+          }
+        );
+      })
+      .catch((err) => console.log(err));
   });
 };
