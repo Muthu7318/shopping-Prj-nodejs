@@ -48,30 +48,30 @@ exports.getSignup = (req, res, next) => {
 exports.postLogin = (req, res, next) => {
   const { email, password } = req.body;
 
-  User.findOne({
-    email: email,
-  })
-    .then((user) => {
-      if (!user) {
-        req.flash("error", "Invalid email or password");
-        res.redirect("/login");
-      }
-      bcrypt
-        .compare(password, user.password)
-        .then((doMatch) => {
-          if (doMatch) {
-            req.session.isLoggedIn = true;
-            req.session.user = user;
-            return req.session.save(() => {
-              res.redirect("/");
-            });
-          }
-          req.flash("error", "Invalid email or password");
-          res.redirect("/login");
-        })
-        .catch((err) => {
-          res.redirect("/login");
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).render("auth/login", {
+      path: "/login",
+      pageTitle: "Login",
+      errorMessage: errors.array()[0].msg,
+    });
+  }
+
+  bcrypt
+    .compare(password, user.password)
+    .then((doMatch) => {
+      if (doMatch) {
+        req.session.isLoggedIn = true;
+        req.session.user = user;
+        return req.session.save(() => {
+          res.redirect("/");
         });
+      }
+      req.flash("error", "Invalid email or password");
+      res.redirect("/login");
+    })
+    .catch((err) => {
+      res.redirect("/login");
     })
     .catch((err) => console.log(err));
 };
