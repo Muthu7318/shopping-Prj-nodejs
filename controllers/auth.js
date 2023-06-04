@@ -1,19 +1,44 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
+const nodemailer = require("nodemailer");
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true, // use SSL
+  auth: {
+    user: "nmuthukumaranm@gmail.com",
+    pass: "",
+  },
+});
 
 exports.getLogin = (req, res, next) => {
-  console.log(req.session);
+  let message = req.flash("error");
+  if (message) {
+    message = message[0];
+  } else {
+    message = null;
+  }
   return res.render("auth/login", {
     path: "/login",
     pageTitle: "Login",
-    // csrfToken: req.csrfToken(),
+    errorMessage: message,
   });
 };
 
 exports.getSignup = (req, res, next) => {
-  res.render("auth/signup", {
+  let message = req.flash("error");
+  console.log("message", message);
+  if (message) {
+    message = message[0];
+  } else {
+    message = null;
+  }
+  return res.render("auth/signup", {
     path: "/signup",
     pageTitle: "Signup",
+    errorMessage: message,
   });
 };
 
@@ -25,7 +50,8 @@ exports.postLogin = (req, res, next) => {
   })
     .then((user) => {
       if (!user) {
-        return res.redirect("/login");
+        req.flash("error", "Invalid email or password");
+        res.redirect("/login");
       }
       bcrypt
         .compare(password, user.password)
@@ -37,6 +63,7 @@ exports.postLogin = (req, res, next) => {
               res.redirect("/");
             });
           }
+          req.flash("error", "Invalid email or password");
           res.redirect("/login");
         })
         .catch((err) => {
@@ -54,6 +81,7 @@ exports.postSignup = (req, res, next) => {
   })
     .then((user) => {
       if (user) {
+        console.log("flash", req.flash("error", "Email exist already"));
         return res.redirect("/signup");
       }
       return bcrypt
@@ -70,6 +98,21 @@ exports.postSignup = (req, res, next) => {
         })
         .then((result) => {
           res.redirect("/login");
+          transporter.sendMail(
+            {
+              from: "shoping App",
+              to: email,
+              subject: "Signup succeeded!",
+              text: "<h1>Successfully signed up!!</h1>",
+            },
+            function (error, info) {
+              if (error) {
+                console.log("email err", error);
+              } else {
+                console.log("Email sent: " + info.response);
+              }
+            }
+          );
         });
     })
     .catch((err) => console.log(err));

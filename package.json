@@ -17,6 +17,7 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
+    "connect-flash": "^0.1.1",
     "connect-mongodb-session": "^3.1.1",
     "csurf": "^1.11.0",
     "ejs": "^3.1.9",
@@ -26,6 +27,7 @@
     "mongodb": "^5.5.0",
     "mongoose": "^7.2.1",
     "mysql2": "^3.3.1",
+    "nodemailer": "^6.9.3",
     "pug": "^3.0.2",
     "sequelize": "^6.31.1"
   }

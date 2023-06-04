@@ -223,6 +223,22 @@ form {
 .btn.danger:active {
   background: red;
   color: white;
+
+}
+
+.user-message{
+  margin:auto;
+  width:90%;
+  border: 1px solid rgb(75, 146, 233);
+  padding:1rem;
+  border-radius: 3px;
+  background:rgb(82, 157, 227);
+  text-align: center;
+}
+
+.user-message--error{
+  border-color:red;
+  background:rgb(244, 133, 133);
 }
 
 @media (min-width: 768px) {
@@ -233,4 +249,9 @@ form {
   #side-menu-toggle {
     display: none;
   }
+
+  .user-message{
+    width:30rem;
+  }
 }
+
