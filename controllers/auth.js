@@ -3,6 +3,8 @@ const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
 const crypto = require("crypto");
 
+const { validationResult } = require("express-validator");
+
 const transporter = nodemailer.createTransport({
   service: "gmail",
   host: "smtp.gmail.com",
@@ -10,7 +12,7 @@ const transporter = nodemailer.createTransport({
   secure: true, // use SSL
   auth: {
     user: "nmuthukumaranm@gmail.com",
-    pass: "onfupjueyjasgbzx",
+    pass: "",
   },
 });
 
@@ -76,6 +78,15 @@ exports.postLogin = (req, res, next) => {
 
 exports.postSignup = (req, res, next) => {
   const { email, password, confirmPassword } = req.body;
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).render("auth/signup", {
+      path: "/signup",
+      pageTitle: "Signup",
+      errorMessage: errors.array()[0].msg,
+    });
+  }
 
   User.findOne({
     email: email,
