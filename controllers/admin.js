@@ -47,28 +47,12 @@ exports.postAddProduct = (req, res, next) => {
     .then(() => {
       return res.redirect("/admin/products");
     })
-    .catch(
-      (err) => {
-        // res.redirect("/500");
-        const error = new Error(err);
-        error.httpStatusCode = 500;
-        return next(error);
-      }
-      // res.status(500).render("admin/edit-product", {
-      //   pageTitle: "Add Product",
-      //   path: "/admin/add-product",
-      //   editing: false,
-      //   hasError: true,
-      //   product: {
-      //     title,
-      //     imageUrl,
-      //     price,
-      //     description,
-      //   },
-      //   errorMessage: "Database opearation failed, please try again",
-      //   validationErrors: errors.array(),
-      // })
-    );
+    .catch((err) => {
+      // res.redirect("/500");
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.getEditProduct = (req, res, next) => {
@@ -94,7 +78,12 @@ exports.getEditProduct = (req, res, next) => {
         validationErrors: [],
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      // res.redirect("/500");
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.postEditProduct = (req, res, next) => {
@@ -135,7 +124,12 @@ exports.postEditProduct = (req, res, next) => {
         return res.redirect("/admin/products");
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      // res.redirect("/500");
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.postDeleteProduct = (req, res, next) => {
@@ -167,5 +161,10 @@ exports.getProducts = (req, res, next) => {
         hasError: false,
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      // res.redirect("/500");
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
