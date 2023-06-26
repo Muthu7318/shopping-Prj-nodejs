@@ -28,7 +28,7 @@ exports.postAddProduct = (req, res, next) => {
   if (!errors.isEmpty()) {
     return res.status(422).render("admin/edit-product", {
       pageTitle: "Add Product",
-      path: "/admin/edit-product",
+      path: "/admin/add-product",
       editing: false,
       hasError: true,
       product: {
@@ -47,7 +47,25 @@ exports.postAddProduct = (req, res, next) => {
     .then(() => {
       return res.redirect("/admin/products");
     })
-    .catch((err) => console.log(err));
+    .catch(
+      (err) => {
+        res.redirect("/500");
+      }
+      // res.status(500).render("admin/edit-product", {
+      //   pageTitle: "Add Product",
+      //   path: "/admin/add-product",
+      //   editing: false,
+      //   hasError: true,
+      //   product: {
+      //     title,
+      //     imageUrl,
+      //     price,
+      //     description,
+      //   },
+      //   errorMessage: "Database opearation failed, please try again",
+      //   validationErrors: errors.array(),
+      // })
+    );
 };
 
 exports.getEditProduct = (req, res, next) => {
