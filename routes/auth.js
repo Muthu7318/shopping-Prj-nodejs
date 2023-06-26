@@ -9,21 +9,19 @@ router.get("/login", authController.getLogin);
 router.post(
   "/login",
   [
-    body("email").isEmail().withMessage("Please enter a valid email address"),
-    body("password", "Password has to be valid")
-      .isLength({
-        min: 5,
-      })
-      .isAlphanumeric()
-      .custom((value, { req }) => {
-        return User.findOne({
+    body("email")
+      .isEmail()
+      .withMessage("Please enter a valid email address")
+      .custom(async (value, { req }) => {
+        console.log("----4", value);
+        const user = await User.findOne({
           email: value,
-        }).then((user) => {
-          if (!user) {
-            throw new Error("Invalid email or password");
-          }
         });
+        if (!user) {
+          throw new Error("Invalid email or password");
+        }
       }),
+    body("password", "Password has to be valid"),
   ],
   authController.postLogin
 );
@@ -36,7 +34,7 @@ router.post(
     check("email")
       .isEmail()
       .withMessage("Please enter a valid email")
-      .custom((value, { req }) => {
+      .custom(async (value, { req }) => {
         return User.findOne({
           email: value,
         }).then((user) => {
