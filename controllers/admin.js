@@ -49,7 +49,10 @@ exports.postAddProduct = (req, res, next) => {
     })
     .catch(
       (err) => {
-        res.redirect("/500");
+        // res.redirect("/500");
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
       }
       // res.status(500).render("admin/edit-product", {
       //   pageTitle: "Add Product",
