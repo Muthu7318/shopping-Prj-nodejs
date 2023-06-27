@@ -23,6 +23,8 @@ exports.postAddProduct = (req, res, next) => {
     userId: req.user,
   });
 
+  console.log("test", imageUrl);
+
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
