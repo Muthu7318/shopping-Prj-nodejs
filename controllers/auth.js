@@ -58,10 +58,10 @@ exports.getSignup = (req, res, next) => {
 
 exports.postLogin = (req, res, next) => {
   const { email, password } = req.body;
-  console.log("----1", email, password);
+  // console.log("----1", email, password);
 
   const errors = validationResult(req);
-  console.log("----2", errors.isEmpty());
+  // console.log("----2", errors.isEmpty());
   if (!errors.isEmpty()) {
     return res.status(422).render("auth/login", {
       path: "/login",
@@ -92,7 +92,7 @@ exports.postLogin = (req, res, next) => {
     bcrypt
       .compare(password, user.password)
       .then((doMatch) => {
-        console.log("doMatch----", doMatch);
+        // console.log("doMatch----", doMatch);
         if (doMatch) {
           req.session.isLoggedIn = true;
           req.session.user = user;

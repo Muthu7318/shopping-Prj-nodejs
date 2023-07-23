@@ -14,7 +14,7 @@ router.post(
       .withMessage("Please enter a valid email address")
       .normalizeEmail()
       .custom(async (value, { req }) => {
-        console.log("----4", value);
+        // console.log("----4", value);
         const user = await User.findOne({
           email: value,
         });

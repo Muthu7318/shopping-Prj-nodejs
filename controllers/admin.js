@@ -1,6 +1,9 @@
 const Product = require("../models/product");
 const { validationResult } = require("express-validator");
 
+const fileHelper = require("../util/file");
+const { file } = require("pdfkit");
+
 exports.getAddProduct = (req, res, next) => {
   return res.render("admin/edit-product", {
     pageTitle: "Add Product",
@@ -113,7 +116,7 @@ exports.postEditProduct = (req, res, next) => {
 
   const errors = validationResult(req);
 
-  console.log("-----1", errors);
+  // console.log("-----1", errors);
   if (!errors.isEmpty()) {
     return res.status(422).render("admin/edit-product", {
       pageTitle: "Edit Product",
@@ -139,6 +142,7 @@ exports.postEditProduct = (req, res, next) => {
       }
       product.title = title;
       if (image) {
+        fileHelper.deleteFile(product.imageUrl);
         product.imageUrl = image.path;
       }
       product.description = description;
@@ -158,11 +162,17 @@ exports.postEditProduct = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
   const { productId } = req.body;
-
-  Product.deleteOne({
-    _id: productId,
-    userId: req.user._id,
-  })
+  Product.findById(productId)
+    .then((product) => {
+      if (!product) {
+        return next(new Error("product not found"));
+      }
+      fileHelper.deleteFile(product.imageUrl);
+      return Product.deleteOne({
+        _id: productId,
+        userId: req.user._id,
+      });
+    })
     .then(() => {
       return res.redirect("/admin/products");
     })
